@@ -20,7 +20,7 @@ public class PingService {
 
     public Mono<String> ping() {
         return Mono.defer(() -> {
-            // 检查是否可以处理请求
+            // check if we can send a request
             if (rateLimiter.tryAcquire()) {
                 return webClient.get()
                         .uri("/pong?message=Hello")

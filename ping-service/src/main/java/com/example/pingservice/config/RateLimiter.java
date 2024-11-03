@@ -21,6 +21,7 @@ public class RateLimiter {
 
     public RateLimiter() {
         try {
+            // initialize file lock
             File lockFile = new File("rate_limit.lock");
             RandomAccessFile randomAccessFile = new RandomAccessFile(lockFile, "rw");
             fileChannel = randomAccessFile.getChannel();
@@ -30,21 +31,21 @@ public class RateLimiter {
     }
 
     public synchronized boolean tryAcquire() {
-        //synchronized 保障单线程并发安全
+        //synchronized ensure single thread security
         try {
-            // 尝试获取文件锁
+            // try to get file lock
             if (lock == null || !lock.isValid()) {
                 lock = fileChannel.lock();
             }
             long currentTime = System.currentTimeMillis();
             if (currentTime - lastResetTime >= 1000) {
-                // 新的时间窗口，重置计数器
+                // new time, reset counter
                 requestCount.set(0);
                 lastResetTime = currentTime;
             }
 
             if (requestCount.get() < 2) {
-                // 增加计数器，每秒最多2次请求
+                // count + 1，2 times per second
                 requestCount.incrementAndGet();
 //                log.info("Request sent");
                 return true;
@@ -52,7 +53,7 @@ public class RateLimiter {
         } catch (IOException e) {
             log.error("Error occurred while trying to acquire rate limit: {}", e.getMessage());
         } finally {
-            // 释放锁，释放资源
+            // release lock & resource
             if (lock != null && lock.isValid()) {
                 try {
                     lock.release();

@@ -17,9 +17,9 @@ public class PongService {
     }
 
     public Mono<String> handleRequest(String message) {
-        // 使用 defer() 延迟执行，确保每次调用都创建一个新的 Mono 对象
+        // Use defer () to delay execution and ensure that a new Mono object is created with each call
         return Mono.defer(() -> {
-            // 检查请求是否符合节流设定
+            // Check if the request complies with the throttling settings
             if (throttlingConfig.canHandleRequest()) {
                 log.info("Handling request: {}", message);
                 return Mono.just(message + " " + "World");

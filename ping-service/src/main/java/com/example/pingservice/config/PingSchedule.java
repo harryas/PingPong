@@ -14,7 +14,7 @@ public class PingSchedule {
 
     @Scheduled(fixedRateString = "${ping.service.interval:400}")
     public void pingPong() {
-        //订阅触发请求
+        // subscribe to the ping service
         pingService.ping().subscribe();
     }
 }

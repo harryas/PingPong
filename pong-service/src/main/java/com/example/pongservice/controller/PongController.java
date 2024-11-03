@@ -21,8 +21,8 @@ public class PongController {
 
     @GetMapping
     public Mono<ResponseEntity<String>> pong(@RequestParam String message) {
-        return pongService.handleRequest(message) // 调用PongService 的 handleRequest 方法
-                .map(ResponseEntity::ok) // 如果有响应，则返回200 OK
-                .defaultIfEmpty(ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body("Throttled")); // 如果没有响应，则返回429 Too Many Requests
+        return pongService.handleRequest(message) // call the handleRequest method of PongService
+                .map(ResponseEntity::ok) // 200 OK, return the result
+                .defaultIfEmpty(ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body("Throttled")); // empty, return 429 Too Many Requests
     }
 }
