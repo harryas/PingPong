@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
+
 @Service
 public class PongService {
 
@@ -17,13 +19,17 @@ public class PongService {
     }
 
     public Mono<String> handleRequest(String message) {
+        // generate a unique request ID
+        String requestId = UUID.randomUUID().toString();
         // Use defer () to delay execution and ensure that a new Mono object is created with each call
         return Mono.defer(() -> {
+            log.info("Request {} received: {}", requestId, message);
             // Check if the request complies with the throttling settings
             if (throttlingConfig.canHandleRequest()) {
-                log.info("Handling request: {}", message);
+                log.info("Request {} handling: {}", requestId, message);
                 return Mono.just(message + " " + "World");
             } else {
+                log.warn("Request {} throttled: {}", requestId, message);
                 return Mono.empty();
             }
         });

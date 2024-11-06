@@ -47,7 +47,6 @@ public class RateLimiter {
             if (requestCount.get() < 2) {
                 // count + 1，2 times per second
                 requestCount.incrementAndGet();
-//                log.info("Request sent");
                 return true;
             }
         } catch (IOException e) {

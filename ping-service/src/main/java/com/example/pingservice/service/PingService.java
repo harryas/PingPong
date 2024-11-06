@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
+
 @Service
 @Slf4j
 public class PingService {
@@ -20,17 +22,22 @@ public class PingService {
 
     public Mono<String> ping() {
         return Mono.defer(() -> {
+            // generate a unique request ID
+            String requestId = UUID.randomUUID().toString();
             // check if we can send a request
             if (rateLimiter.tryAcquire()) {
+                String message = "Hello";
+                log.info("Request {} sent message: {}", requestId, message);
+                // send the request to the pong service
                 return webClient.get()
-                        .uri("/pong?message=Hello")
+                        .uri("/pong?message=" + message)
                         .retrieve()
                         .bodyToMono(String.class)
-                        .doOnError(e -> log.error("Request sent but Pong throttled it: {}", e.getMessage()))
-                        .doOnSuccess(response -> log.info("Request sent & Pong responded: {}", response))
+                        .doOnError(e -> log.error("Request {} sent but Pong throttled it: {}", requestId, e.getMessage()))
+                        .doOnSuccess(response -> log.info("Request {} sent & Pong responded: {}", requestId, response))
                         .onErrorReturn("Request throttled");
             } else {
-                log.info("Request not sent as being rate limited");
+                log.info("Request {} not sent as being rate limited", requestId);
                 return Mono.just("Rate limited");
             }
         });

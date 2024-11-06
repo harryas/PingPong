@@ -14,7 +14,7 @@ import spock.lang.Specification
 @WebFluxTest(PongController.class)
 @ContextConfiguration(classes = PongServiceApplication.class)
 @Import([ThrottlingConfig.class, PongService.class])
-class PongTest extends Specification {
+class PongTests extends Specification {
 
     @Autowired
     WebTestClient webTestClient

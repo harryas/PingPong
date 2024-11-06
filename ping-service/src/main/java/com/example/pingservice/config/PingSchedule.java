@@ -12,6 +12,7 @@ public class PingSchedule {
     @Autowired
     private PingService pingService;
 
+    // schedule , default to every 400 ms
     @Scheduled(fixedRateString = "${ping.service.interval:400}")
     public void pingPong() {
         // subscribe to the ping service
